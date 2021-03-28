@@ -53,12 +53,30 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
         let ovStops = {};
 
 
+
+        // let relativeTimestamps = true;
+        //
+        // if(fs.existsSync(__dirname + '/ovdrs-config.json')){
+        //     let config = JSON.parse(fs.readFileSync(__dirname + '/ovdrs-config.json').toString());
+        //
+        //     relativeTimestamps = config.relativeTimestamps;
+        // }
+
+        let dates = {};
+
+
         let targetDateWD = moment(process.argv[3], 'YYYY-MM-DD').format("YYYY-MM-DD");
         let targetDateND = moment(process.argv[3], 'YYYY-MM-DD').format("YYYYMMDD");
         let chb = JSON.parse(fs.readFileSync(__dirname + '/' + process.argv[2] + '/chb.btm.json').toString());
 
         console.log(`Excluding services for other days than ${targetDateWD}/${targetDateND}`);
         let GTFScalendarDates = fs.readFileSync(__dirname + '/' + process.argv[2] + '/gtfs/calendar_dates.txt').toString();
+
+        GTFScalendarDates.split("\n").forEach(c => {
+            let cd = c.split(",");
+            dates[cd[0]] = cd[1];
+        });
+
         let services = GTFScalendarDates.split("\n").filter(s => {
             let line = s.split(',');
             return (line[1] == targetDateND);
@@ -209,8 +227,12 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
 
                     route.push(`S:${code}`);
                     calls.push(`S:${code}`);
-                    arrivalTimes.push(moment.duration(s[GTFS.StopTime.arrival_time], 'minutes').asSeconds());
-                    departureTimes.push(moment.duration(s[GTFS.StopTime.departure_time], 'minutes').asSeconds());
+
+                    let departureTime = moment.duration(s[GTFS.StopTime.departure_time], 'minutes').asSeconds();
+                    let arrivalTime = moment.duration(s[GTFS.StopTime.departure_time], 'minutes').asSeconds();
+
+                    arrivalTimes.push(arrivalTime);
+                    departureTimes.push(departureTime);
                     // console.log(s[GTFS.StopTime.stop_sequence], s[GTFS.StopTime.arrival_time], s[GTFS.StopTime.departure_time], s[GTFS.StopTime.stop_id], typeof s[GTFS.StopTime.stop_id], ]);
                 }
 
@@ -221,10 +243,7 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
                     formula: t.split(",")[GTFS.Trip.trip_long_name],
                     route: route,
                     calls: calls,
-                    cancelled: [],
-                    arrivalDelay: [],
-                    departureDelay: [],
-                    realtime: false,
+                    date: targetDateWD,
                     arrivalTimes: arrivalTimes,
                     departureTimes: departureTimes
                 }

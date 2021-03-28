@@ -16,7 +16,7 @@ Het doel van OVDRS is om data op een compacte en flexibele manier op te slaan. D
 6. Genereer je dataset met `sh compile.sh <YYYY-MM-DD>`. Zorg ervoor dat de data van deze datum in het huidige GTFS bestand van OpenOV/OVApi zit.
 7. Na ongeveer twee minuten stampen krijg je een JSON bestandje (`<YYYY-MM-DD>.json`). Hierin zit alle data nodig die je nodig hebt om de dienstregeling van de door jouw gespecificeerde datum te verwerken.
 
-Eventueel kun je lekker testen in de browser door `ts-node web.ts` uit te voeren en naar `http://localhost:8888` gaan om de data in een gebruiksvriendelijke vorm te bekijken (zorg ervoor dat je in `web.ts` boven aan de juiste datum invult. Het `web.ts` bestand kun je ook gebruiken als voorbeelden voor hoe je de data kan verwerken. Echte voorbeelden en documentatie volgt nog.
+Eventueel kun je testen in de browser door `ts-node web.ts` uit te voeren en naar `http://localhost:8888` gaan om de data in een gebruiksvriendelijke vorm te bekijken (zorg ervoor dat je in `web.ts` boven aan de juiste datum invult. Deze webserver en OVDRS verwerker draait volledig vanuit het geheugen maar heeft geen database systeem. Het verwerken van bestanden gaat dus niet optimaal. Het `web.ts` bestand kun je ook gebruiken als voorbeelden voor hoe je de data kan verwerken. Echte voorbeelden en documentatie volgt nog.
 
 
 ## Special thanks to:

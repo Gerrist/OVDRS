@@ -109,11 +109,23 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
     try {
         var ovTrips_1 = {};
         var ovStops_1 = {};
-        var targetDateWD = moment(process.argv[3], 'YYYY-MM-DD').format("YYYY-MM-DD");
+        // let relativeTimestamps = true;
+        //
+        // if(fs.existsSync(__dirname + '/ovdrs-config.json')){
+        //     let config = JSON.parse(fs.readFileSync(__dirname + '/ovdrs-config.json').toString());
+        //
+        //     relativeTimestamps = config.relativeTimestamps;
+        // }
+        var dates_1 = {};
+        var targetDateWD_1 = moment(process.argv[3], 'YYYY-MM-DD').format("YYYY-MM-DD");
         var targetDateND_1 = moment(process.argv[3], 'YYYY-MM-DD').format("YYYYMMDD");
         var chb = JSON.parse(fs.readFileSync(__dirname + '/' + process.argv[2] + '/chb.btm.json').toString());
-        console.log("Excluding services for other days than " + targetDateWD + "/" + targetDateND_1);
+        console.log("Excluding services for other days than " + targetDateWD_1 + "/" + targetDateND_1);
         var GTFScalendarDates = fs.readFileSync(__dirname + '/' + process.argv[2] + '/gtfs/calendar_dates.txt').toString();
+        GTFScalendarDates.split("\n").forEach(function (c) {
+            var cd = c.split(",");
+            dates_1[cd[0]] = cd[1];
+        });
         var services_1 = GTFScalendarDates.split("\n").filter(function (s) {
             var line = s.split(',');
             return (line[1] == targetDateND_1);
@@ -165,7 +177,7 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
         var skipped_1 = 0;
         var tempTripTimes_1 = {};
         fs.readdir(__dirname + '/' + process.argv[2] + '/gtfs/stop_times_parts', function (err, files) { return __awaiter(void 0, void 0, void 0, function () {
-            var skippedHeader, lines, _i, files_1, file, filePath, _a, trips_2, t, routeId, tripId, realtimeTripId, tripStops, route, calls, arrivalTimes, departureTimes, _b, tripStops_1, s, code, hasPlatform, stopAreasBTM, stopAreasTrain, dataSet;
+            var skippedHeader, lines, _i, files_1, file, filePath, _a, trips_2, t, routeId, tripId, realtimeTripId, tripStops, route, calls, arrivalTimes, departureTimes, _b, tripStops_1, s, code, hasPlatform, departureTime, arrivalTime, stopAreasBTM, stopAreasTrain, dataSet;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -245,8 +257,10 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
                                 }
                                 route.push("S:" + code);
                                 calls.push("S:" + code);
-                                arrivalTimes.push(moment.duration(s[GTFS.StopTime.arrival_time], 'minutes').asSeconds());
-                                departureTimes.push(moment.duration(s[GTFS.StopTime.departure_time], 'minutes').asSeconds());
+                                departureTime = moment.duration(s[GTFS.StopTime.departure_time], 'minutes').asSeconds();
+                                arrivalTime = moment.duration(s[GTFS.StopTime.departure_time], 'minutes').asSeconds();
+                                arrivalTimes.push(arrivalTime);
+                                departureTimes.push(departureTime);
                                 // console.log(s[GTFS.StopTime.stop_sequence], s[GTFS.StopTime.arrival_time], s[GTFS.StopTime.departure_time], s[GTFS.StopTime.stop_id], typeof s[GTFS.StopTime.stop_id], ]);
                             }
                             ovTrips_1[realtimeTripId] = {
@@ -256,10 +270,7 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
                                 formula: t.split(",")[GTFS.Trip.trip_long_name],
                                 route: route,
                                 calls: calls,
-                                cancelled: [],
-                                arrivalDelay: [],
-                                departureDelay: [],
-                                realtime: false,
+                                date: targetDateWD_1,
                                 arrivalTimes: arrivalTimes,
                                 departureTimes: departureTimes
                             };
