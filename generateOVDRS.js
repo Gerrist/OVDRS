@@ -124,7 +124,11 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
         var GTFScalendarDates = fs.readFileSync(__dirname + '/' + process.argv[2] + '/gtfs/calendar_dates.txt').toString();
         GTFScalendarDates.split("\n").forEach(function (c) {
             var cd = c.split(",");
-            dates_1[cd[0]] = cd[1];
+            dates_1[cd[1]] = "";
+        });
+        console.log("Available dates: ");
+        Object.keys(dates_1).sort().forEach(function (cd) {
+            console.log(cd);
         });
         var services_1 = GTFScalendarDates.split("\n").filter(function (s) {
             var line = s.split(',');

@@ -10,7 +10,7 @@ app.set("view engine", "ejs");
 app.set("views", "./web");
 
 
-const date = "2021-03-28";
+const date = "2021-04-02";
 let ovdrs;
 
 // app.use("/static", express.static(__dirname + '/web/static'));

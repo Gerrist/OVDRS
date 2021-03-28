@@ -74,7 +74,12 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
 
         GTFScalendarDates.split("\n").forEach(c => {
             let cd = c.split(",");
-            dates[cd[0]] = cd[1];
+            dates[cd[1]] = "";
+        });
+
+        console.log("Available dates: ");
+        Object.keys(dates).sort().forEach(cd => {
+            console.log(cd);
         });
 
         let services = GTFScalendarDates.split("\n").filter(s => {
