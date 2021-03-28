@@ -21,7 +21,8 @@ echo "OVDRS COMPILE: Downloading latest CHB"
 node --max_old_space_size=8192 parseLatestCHB.js
 rm -rf scrapeNDOV
 echo "OVDRS COMPILE: Parsing CHB"
-ts-node parseCHB.ts tmp
+tsc parseCHB.ts
+node parseCHB.js tmp
 echo "OVDRS COMPILE: Generating train CHB json"
 ts-node gtfsTrainStopsCHB.ts tmp
 echo "OVDRS COMPILE: Generating BTM CHB json"
