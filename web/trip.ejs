@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%= line %> naar <%= destination %></title>
+    <style>
+        @import "//fonts.googleapis.com/css?family=Roboto";
+        body{
+            font-family: 'Roboto', sans-serif;
+            /*background-color: #222;*/
+        }
+
+        .call{
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lijn <%= line %> naar <%= destination %> gereden door <%= operator %></h1>
+    <table>
+        <% calls.forEach(c => { %>
+            <tr class="call" onclick="window.location = '/departures/<%= c.stopArea %>' ">
+                <td class="call-times">
+                    <div class="arrival"><%= moment().startOf('day').add(c.arrivalTime, 'seconds').format('HH:mm:ss') %></div>
+                    <div class="departure"><%= moment().startOf('day').add(c.departureTime, 'seconds').format('HH:mm:ss') %></div>
+                </td>
+                <td class="call-stop"><%= c.stop[0] %></td>
+                <td class="call-platform"><%= c.stop[2] %></td>
+                <td class="call-platform"><%= c.stopId %> &gt; <%= c.stopArea %></td>
+            </tr>
+        <% }) %>
+    </table>
+
+</body>
+</html>

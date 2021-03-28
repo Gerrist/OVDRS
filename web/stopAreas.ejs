@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>OVDRS Demo</title>
+    <style>
+        @import "//fonts.googleapis.com/css?family=Roboto";
+        body{
+            font-family: 'Roboto', sans-serif;
+            /*background-color: #222;*/
+        }
+
+        /*h1{color: white}*/
+
+        .stop{
+            cursor: pointer;
+        /*    background-color: white;*/
+        /*    border-radius: 18px;*/
+        /*    margin: 5px;*/
+        /*    display: block;*/
+        }
+
+        .stop td{
+            padding: 5px 0;
+        }
+
+        .stop .stop-name{
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Stops</h1>
+    <table>
+        <% Object.keys(stopAreas).forEach(sa => { %>
+            <tr class="stop" onclick="window.location = '/departures/<%= sa %>' ">
+                <td class="stop-name"><%= stopAreas[sa].name %></td>
+                <td class="stop-address"><%= stopAreas[sa].street %>, <%= stopAreas[sa].town %></td>
+                <td class="stop-address"><%= stopAreas[sa].type %></td>
+            </tr>
+        <% }) %>
+    </table>
+
+</body>
+</html>

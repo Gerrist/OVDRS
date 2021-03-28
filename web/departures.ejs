@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%= stop.name %></title>
+    <style>
+        @import "//fonts.googleapis.com/css?family=Roboto";
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            /*background-color: #222;*/
+        }
+
+        /*h1{color: white}*/
+
+        .trip {
+            cursor: pointer;
+        }
+
+        .trip td {
+            padding: 5px;
+        }
+
+        .trip .line {
+            padding: 5px;
+            background-color: #333;
+            color: white;
+            border-radius: 1000px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .trip .platform, .trip .headsign {
+            font-weight: bold;
+        }
+
+        .operators, .lines{
+            padding: 10px;
+        }
+
+        .operators .operator, .lines .line{
+            display: inline-block;
+            padding: 15px 10px;
+            border-radius: 18px;
+            border: 1px transparent solid;
+        }
+
+        .lines .line{
+            background-color: #333333;
+            color: white;
+        }
+
+        .operators .operator{
+            background-color: #fff;
+            color: #333333;
+            border-color: #333;
+        }
+    </style>
+</head>
+<body>
+<h1>Vertrektijden <%= stop.name %></h1>
+<div class="operators">
+    <% operators.forEach((l) => { %>
+        <div class="operator"><%= l %></div>
+    <% }) %>
+</div>
+<div class="lines">
+    <% lines.forEach((l) => { %>
+        <div class="line"><%= l.split(':')[1] %></div>
+    <% }) %>
+</div>
+<table>
+    <% departures.forEach((trip) => { %>
+        <tr class="trip" onclick="window.location = '/trip/<%= trip.realtimeTripId %>'">
+            <td class="time"><%= moment(trip.departureTime * 1000).subtract(1, 'hour').format('HH:mm') %></td>
+            <td class="line"><%= trip.line.split(':')[1] %></td>
+            <td class="formula"><%= trip.formula %></td>
+            <td class="headsign"><%= trip.destination %></td>
+            <td class="operator"><%= trip.operator %></td>
+            <td class="platform"><%= trip.platform[2] %></td>
+        </tr>
+    <% }) %>
+</table>
+
+</body>
+</html>
