@@ -57,10 +57,10 @@ app.all("/trip/:realtimeTripId", (req, res) => {
         getTrip(ovdrs, req.params.realtimeTripId).then(calls => {
             res.render('trip', {calls, moment, line, destination, operator});
         }).catch(err => {
-            res.send(err);
+            res.send({err});
         });
     } catch (e) {
-        res.send(e);
+        res.send({e});
     }
 });
 

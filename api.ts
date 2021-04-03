@@ -12,7 +12,7 @@ export function resolveStopArea(ovdrs: OVDRS, stopId: string) {
     let stopArea = "S:UNKNOWN";
     Object.keys(ovdrs.stopAreas).forEach(s => {
         let sa = ovdrs.stopAreas[s];
-        if(stopId.slice(-1) == ':'){
+        if (stopId.slice(-1) == ':') {
             stopId = stopId.slice(0, -1);
         }
         if (sa.stops.includes(stopId)) {
@@ -47,7 +47,7 @@ export function getDepartures(ovdrs: any, stop: string): Promise<Array<Trip>> {
 
                     if (index > -1) {
                         if (t.departureTimes[index] > ts - 120) {
-                            if(!(index == t.calls.length - 1)){
+                            if (!(index == t.calls.length - 1)) {
                                 departures.push({
                                     realtimeTripId: tid,
                                     operator: t.operator,
@@ -119,7 +119,6 @@ export function getStopLines(ovdrs: any, stop: string): Promise<Array<Trip>> {
                     }
 
 
-
                 });
             });
 
@@ -170,7 +169,6 @@ export function getStopOperators(ovdrs: any, stop: string): Promise<any> {
                     }
 
 
-
                 });
             });
 
@@ -202,12 +200,11 @@ export function getTrip(ovdrs: any, realtimeTripId: string): Promise<Array<Trip>
             // console.log('Lijn ' + ovdrs.trips[realtimeTripId].line.split(':')[1] + ' naar ' + ovdrs.trips[trip].destination + ' gereden door ' + ovdrs.trips[trip].operator + ':');
 
             ovdrs.trips[realtimeTripId].route.forEach((t, i) => {
-                console.log(t, ovdrs.stops[t]);
                 let stop = ovdrs.stops[t];
                 let arrivalTime = ovdrs.trips[realtimeTripId].arrivalTimes[i];
                 let departureTime = ovdrs.trips[realtimeTripId].departureTimes[i];
                 let calls = ovdrs.trips[realtimeTripId].calls.indexOf(t) > -1;
-                let cancelled = ovdrs.trips[realtimeTripId].cancelled.indexOf(t) > -1;
+                // let cancelled = ovdrs.trips[realtimeTripId].cancelled.indexOf(t) > -1;
                 let stopArea = resolveStopArea(ovdrs, t);
 
                 callsList.push({
@@ -215,7 +212,7 @@ export function getTrip(ovdrs: any, realtimeTripId: string): Promise<Array<Trip>
                     arrivalTime,
                     departureTime,
                     calls,
-                    cancelled,
+                    // cancelled,
                     stopArea,
                     stopId: t
                 });

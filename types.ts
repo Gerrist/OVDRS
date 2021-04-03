@@ -4,9 +4,12 @@ export type Trip = {
     "line": string,
     "operator": string,
     "destination": string,
-    "route": Array<number>,
-    "calls": Array<number>,
-    "cancelled": Array<number>,
+    "route": Array<any>,
+    "calls": Array<any>,
+    "departed": Array<any>,
+    "arrived": Array<any>,
+    "extra": Array<any>,
+    "cancelled": Array<any>,
     "arrivalTimes": Array<number | null>,
     "departureTimes": Array<number | null>
 };

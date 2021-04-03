@@ -196,6 +196,8 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
                 let tripStops = tempTripTimes[realtimeTripId];
                 let route = [];
                 let calls = [];
+                let arrived = [];
+                let departed = [];
                 let arrivalTimes = [];
                 let departureTimes = [];
 
@@ -232,6 +234,8 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
 
                     route.push(`S:${code}`);
                     calls.push(`S:${code}`);
+                    arrived.push(false);
+                    departed.push(false);
 
                     let departureTime = moment.duration(s[GTFS.StopTime.departure_time], 'minutes').asSeconds();
                     let arrivalTime = moment.duration(s[GTFS.StopTime.departure_time], 'minutes').asSeconds();
@@ -246,8 +250,12 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
                     operator: routes[routeId][GTFS.Route.agency_id],
                     destination: t.split(",")[GTFS.Trip.trip_headsign],
                     formula: t.split(",")[GTFS.Trip.trip_long_name],
+                    arrived: arrived,
+                    departed: departed,
                     route: route,
                     calls: calls,
+                    cancelled: [],
+                    extra: [],
                     date: targetDateWD,
                     arrivalTimes: arrivalTimes,
                     departureTimes: departureTimes
