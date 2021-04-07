@@ -22,6 +22,15 @@ export type OVDRS = {
     "stopAreas": {
         [key: string]: any;
     }
+    "lines": {
+        [key: string]: {
+            lineReadable: string,
+            operator: string
+        };
+    }
+    "operators": {
+        [key: string]: string;
+    }
     "trips": {
         [key: string]: Trip;
     }

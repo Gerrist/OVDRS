@@ -96,6 +96,14 @@ var GTFS;
         Route[Route["route_text_color"] = 7] = "route_text_color";
         Route[Route["route_url"] = 8] = "route_url";
     })(Route = GTFS.Route || (GTFS.Route = {}));
+    var Agency;
+    (function (Agency) {
+        Agency[Agency["agency_id"] = 0] = "agency_id";
+        Agency[Agency["agency_name"] = 1] = "agency_name";
+        Agency[Agency["agency_url"] = 2] = "agency_url";
+        Agency[Agency["agency_timezone"] = 3] = "agency_timezone";
+        Agency[Agency["agency_phone"] = 4] = "agency_phone";
+    })(Agency = GTFS.Agency || (GTFS.Agency = {}));
 })(GTFS || (GTFS = {}));
 function forceArray(data) {
     if (typeof data.forEach == 'function') { // reliable way to tell if data is Array
@@ -165,6 +173,12 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
         GTFSroutes.forEach(function (r) {
             routes_1[r.split(",")[GTFS.Route.route_id]] = r.split(",");
         });
+        console.log("Getting operators");
+        var GTFSoperators = fs.readFileSync(__dirname + '/' + process.argv[2] + '/gtfs/agency.txt').toString().split("\n");
+        var operators_1 = {};
+        GTFSoperators.forEach(function (r) {
+            operators_1[r.split(",")[GTFS.Agency.agency_id]] = r.split(",")[GTFS.Agency.agency_name];
+        });
         console.log("Getting today's trips");
         var GTFStrips = fs.readFileSync(__dirname + '/' + process.argv[2] + '/gtfs/trips.txt').toString().split("\n");
         var tripsObj_1 = {};
@@ -181,7 +195,7 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
         var skipped_1 = 0;
         var tempTripTimes_1 = {};
         fs.readdir(__dirname + '/' + process.argv[2] + '/gtfs/stop_times_parts', function (err, files) { return __awaiter(void 0, void 0, void 0, function () {
-            var skippedHeader, lines, _i, files_1, file, filePath, _a, trips_2, t, routeId, tripId, realtimeTripId, tripStops, route, calls, arrivalTimes, departureTimes, _b, tripStops_1, s, code, hasPlatform, departureTime, arrivalTime, stopAreasBTM, stopAreasTrain, dataSet;
+            var skippedHeader, lines, _i, files_1, file, filePath, _a, trips_2, t, routeId, tripId, realtimeTripId, tripStops, route, calls, arrived, departed, arrivalTimes, departureTimes, _b, tripStops_1, s, code, hasPlatform, departureTime, arrivalTime, stopAreasBTM, stopAreasTrain, dataSet;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -239,6 +253,8 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
                             tripStops = tempTripTimes_1[realtimeTripId];
                             route = [];
                             calls = [];
+                            arrived = [];
+                            departed = [];
                             arrivalTimes = [];
                             departureTimes = [];
                             tripStops.sort(function (a, b) {
@@ -261,8 +277,10 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
                                 }
                                 route.push("S:" + code);
                                 calls.push("S:" + code);
-                                departureTime = moment.duration(s[GTFS.StopTime.departure_time], 'minutes').asSeconds();
-                                arrivalTime = moment.duration(s[GTFS.StopTime.departure_time], 'minutes').asSeconds();
+                                arrived.push(false);
+                                departed.push(false);
+                                departureTime = moment(targetDateWD_1, "YYYY-MM-DD").add(moment.duration(s[GTFS.StopTime.departure_time], 'minutes').asSeconds(), 'seconds').unix();
+                                arrivalTime = moment(targetDateWD_1, "YYYY-MM-DD").add(moment.duration(s[GTFS.StopTime.arrival_time], 'minutes').asSeconds(), 'seconds').unix();
                                 arrivalTimes.push(arrivalTime);
                                 departureTimes.push(departureTime);
                                 // console.log(s[GTFS.StopTime.stop_sequence], s[GTFS.StopTime.arrival_time], s[GTFS.StopTime.departure_time], s[GTFS.StopTime.stop_id], typeof s[GTFS.StopTime.stop_id], ]);
@@ -272,8 +290,12 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
                                 operator: routes_1[routeId][GTFS.Route.agency_id],
                                 destination: t.split(",")[GTFS.Trip.trip_headsign],
                                 formula: t.split(",")[GTFS.Trip.trip_long_name],
+                                arrived: arrived,
+                                departed: departed,
                                 route: route,
                                 calls: calls,
+                                cancelled: [],
+                                extra: [],
                                 date: targetDateWD_1,
                                 arrivalTimes: arrivalTimes,
                                 departureTimes: departureTimes
@@ -286,7 +308,7 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
                         dataSet = {
                             date: process.argv[3],
                             stops: ovStops_1,
-                            // stops: {},
+                            operators: operators_1,
                             stopAreas: Object.assign(stopAreasBTM, stopAreasTrain),
                             // stopAreas: stopAreasTrain,
                             trips: ovTrips_1

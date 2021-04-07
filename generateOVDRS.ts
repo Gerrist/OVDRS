@@ -37,6 +37,10 @@ namespace GTFS {
     export enum Route {
         route_id, agency_id, route_short_name, route_long_name, route_desc, route_type, route_color, route_text_color, route_url
     }
+
+    export enum Agency {
+        agency_id, agency_name, agency_url, agency_timezone, agency_phone
+    }
 }
 
 function forceArray(data: any) {
@@ -51,7 +55,6 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
     try {
         let ovTrips = {};
         let ovStops = {};
-
 
 
         // let relativeTimestamps = true;
@@ -101,9 +104,9 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
             let csv = csvrow.parse(r);
             let code = stop[GTFS.Stop.stop_code];
             // console.log(`'${r.split(",")[GTFS.Stop.stop_code]}' '${r.split(",")[GTFS.Stop.zone_id]}'`)
-            if(typeof stop[GTFS.Stop.zone_id] == 'string'){
-                if(stop[GTFS.Stop.zone_id].indexOf("IFF:") > -1){
-                    if(stop[GTFS.Stop.platform_code] == ''){
+            if (typeof stop[GTFS.Stop.zone_id] == 'string') {
+                if (stop[GTFS.Stop.zone_id].indexOf("IFF:") > -1) {
+                    if (stop[GTFS.Stop.platform_code] == '') {
                         code = stop[GTFS.Stop.zone_id];
 
                     } else {
@@ -112,7 +115,7 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
                 }
             }
 
-            ovStops["S:" + code] = [csv[GTFS.Stop.stop_name], csv[GTFS.Stop.location_type], csv[GTFS.Stop.platform_code], [csv[GTFS.Stop.stop_lat],csv[GTFS.Stop.stop_lon]]];
+            ovStops["S:" + code] = [csv[GTFS.Stop.stop_name], csv[GTFS.Stop.location_type], csv[GTFS.Stop.platform_code], [csv[GTFS.Stop.stop_lat], csv[GTFS.Stop.stop_lon]]];
         });
 
         console.log(`Getting routes`);
@@ -120,6 +123,13 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
         let routes = {};
         GTFSroutes.forEach(r => {
             routes[r.split(",")[GTFS.Route.route_id]] = r.split(",");
+        });
+
+        console.log(`Getting operators`);
+        let GTFSoperators = fs.readFileSync(__dirname + '/' + process.argv[2] + '/gtfs/agency.txt').toString().split("\n")
+        let operators = {};
+        GTFSoperators.forEach(r => {
+            operators[r.split(",")[GTFS.Agency.agency_id]] = r.split(",")[GTFS.Agency.agency_name];
         });
 
         console.log(`Getting today's trips`);
@@ -157,9 +167,9 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
                         // console.log(st[GTFS.StopTime.trip_id]);
                         // console.log(tripsObj[st[GTFS.StopTime.trip_id]]);
 
-                        if(st[GTFS.StopTime.trip_id] in tripsObj){
+                        if (st[GTFS.StopTime.trip_id] in tripsObj) {
                             let rti = tripsObj[st[GTFS.StopTime.trip_id]].split(",")[GTFS.Trip.realtime_trip_id];
-                            if(!(rti in tempTripTimes)){
+                            if (!(rti in tempTripTimes)) {
                                 tempTripTimes[rti] = [];
                             }
                             //
@@ -201,11 +211,11 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
                 let arrivalTimes = [];
                 let departureTimes = [];
 
-                tripStops.sort(( a, b ) => {
-                    if ( parseInt(a[GTFS.StopTime.stop_sequence]) < parseInt(b[GTFS.StopTime.stop_sequence]) ){
+                tripStops.sort((a, b) => {
+                    if (parseInt(a[GTFS.StopTime.stop_sequence]) < parseInt(b[GTFS.StopTime.stop_sequence])) {
                         return -1;
                     }
-                    if ( parseInt(a[GTFS.StopTime.stop_sequence]) > parseInt(b[GTFS.StopTime.stop_sequence]) ){
+                    if (parseInt(a[GTFS.StopTime.stop_sequence]) > parseInt(b[GTFS.StopTime.stop_sequence])) {
                         return 1;
                     }
                     return 0;
@@ -225,10 +235,10 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
                     // }
 
                     let code = stops[s[GTFS.StopTime.stop_id]][GTFS.Stop.stop_code];
-                    if(typeof stops[s[GTFS.StopTime.stop_id]][GTFS.Stop.zone_id] == 'string'){
-                        if(stops[s[GTFS.StopTime.stop_id]][GTFS.Stop.zone_id].indexOf("IFF:") > -1){
+                    if (typeof stops[s[GTFS.StopTime.stop_id]][GTFS.Stop.zone_id] == 'string') {
+                        if (stops[s[GTFS.StopTime.stop_id]][GTFS.Stop.zone_id].indexOf("IFF:") > -1) {
                             let hasPlatform = stops[s[GTFS.StopTime.stop_id]][GTFS.Stop.platform_code] != "";
-                            code = stops[s[GTFS.StopTime.stop_id]][GTFS.Stop.zone_id] + (hasPlatform ? ':'  + stops[s[GTFS.StopTime.stop_id]][GTFS.Stop.platform_code] : '');
+                            code = stops[s[GTFS.StopTime.stop_id]][GTFS.Stop.zone_id] + (hasPlatform ? ':' + stops[s[GTFS.StopTime.stop_id]][GTFS.Stop.platform_code] : '');
                         }
                     }
 
@@ -237,8 +247,8 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
                     arrived.push(false);
                     departed.push(false);
 
-                    let departureTime = moment.duration(s[GTFS.StopTime.departure_time], 'minutes').asSeconds();
-                    let arrivalTime = moment.duration(s[GTFS.StopTime.departure_time], 'minutes').asSeconds();
+                    let departureTime = moment(targetDateWD, "YYYY-MM-DD").add(moment.duration(s[GTFS.StopTime.departure_time], 'minutes').asSeconds(), 'seconds').unix();
+                    let arrivalTime = moment(targetDateWD, "YYYY-MM-DD").add(moment.duration(s[GTFS.StopTime.arrival_time], 'minutes').asSeconds(), 'seconds').unix();
 
                     arrivalTimes.push(arrivalTime);
                     departureTimes.push(departureTime);
@@ -269,11 +279,10 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
             let stopAreasTrain = JSON.parse(fs.readFileSync(__dirname + '/' + process.argv[2] + '/chb.train.json').toString());
 
 
-
             let dataSet = {
                 date: process.argv[3],
                 stops: ovStops,
-                // stops: {},
+                operators: operators,
                 stopAreas: Object.assign(stopAreasBTM, stopAreasTrain),
                 // stopAreas: stopAreasTrain,
                 trips: ovTrips
@@ -284,7 +293,6 @@ if (fs.existsSync(__dirname + '/' + process.argv[2] + '/chb.btm.json')) {
             fs.writeFileSync(__dirname + '/' + process.argv[3] + '.json', JSON.stringify(dataSet));
 
             console.log("Done!");
-
 
 
         });
