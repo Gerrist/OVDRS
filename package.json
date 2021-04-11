@@ -21,6 +21,7 @@
     "gunzip-file": "^0.1.1",
     "moment": "^2.29.1",
     "moment-duration-format": "^2.3.2",
+    "moment-timezone": "^0.5.33",
     "rd-to-wgs84": "^1.0.0",
     "website-scraper": "^4.2.3",
     "website-scraper-existing-directory": "^0.1.0",

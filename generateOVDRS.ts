@@ -1,9 +1,11 @@
 import * as fs from "fs";
 import {parse} from "csv";
-import moment = require("moment");
+import moment = require("moment-timezone");
 import {listenerCount} from "cluster";
 import * as csvrow from 'csvrow';
 import {type} from "os";
+moment.tz.setDefault("Europe/Amsterdam");
+
 
 
 type GTFSTrip = {
